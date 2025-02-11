@@ -2,29 +2,48 @@
 {
     public static class HashEncryption
     {
-        public static string  Hasher(string inputText, string key)
+        public static string  Hasher(string inputText, string key , bool cyrillicLetters = false)
         {
-           key = key.Substring(0, Math.Min(127, key.Length));
-            List<int> numbers= Utilities.Encode(key);
-            for (int i = 0; i < numbers.Count; i++)
+           ulong realKey = Utilities.StringKeyToRealKey(key);
+            return  GenerateHash(inputText, realKey, cyrillicLetters);    
+        }
+        public static string Hasher(string inputText, long key, bool cyrillicLetters = false)
+        {
+            ulong realKey = Utilities.LongKeyToRealKey(key);
+            return GenerateHash(inputText, realKey, cyrillicLetters);        
+        }
+        private static string GenerateHash(string inputText, ulong realKey, bool cyrillicLetters)
+        {
+            int availableSymbols = cyrillicLetters ? 128 : 62;
+            List<int> digits = realKey.ToString().Select(c => c - '0').ToList();
+            digits.Reverse();
+            int getNumber =0;
+            int j = 0;
+            List<int> piramid = Utilities.Encode(inputText);
+            List<int> result = new List<int>();
+            int n = (255 / piramid.Count) + 1;
+            for (int i = 0; i < n; i++)
             {
-                if (numbers[i] == 0) numbers[i] = 1;             
+                List<int> piramidCopy = new List<int>(piramid);
+                while (true)
+                {
+                    getNumber = getNumber + digits[j % digits.Count];
+                
+                    j++;
+                    
+                    result.Add(Math.Abs(((piramidCopy[getNumber% piramidCopy.Count])+getNumber)% availableSymbols));
+                    if(piramidCopy.Count == 1) { break; }
+                    for(int l = 0; l<piramidCopy.Count-1; l++)
+                    {
+                        piramidCopy[l] = piramidCopy[l] + piramidCopy[l + 1];
+                    }
+                    piramidCopy.RemoveAt(piramidCopy.Count - 1);
+                }
             }
-            //int count = Math.Min(6, numbers.Count);
-            //long mult = numbers.Take(count).Aggregate(1, (acc, n) => acc * n);
-            long newKey = numbers.Sum() + numbers.Take(Math.Min(6, numbers.Count)).Aggregate(1, (acc, n) => acc * n);
-            string encryptedText = Hasher(inputText, newKey);
-            return encryptedText;
-        }
-        public static string Hasher(string inputText, long key)
-        {            
-            ulong realKey = ulong.MaxValue - (ulong)key;
-            string encryptedText = GenerateHash(inputText, realKey);
-            return encryptedText;
-        }
-        private static string GenerateHash(string inputText, ulong realKey)
-        {
-            return inputText;
+  
+            string outputText = Utilities.Decode(result);
+            return outputText;
         }
     }
 }
+ 

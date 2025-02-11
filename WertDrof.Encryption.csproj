@@ -1,9 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<OutputType>Library</OutputType>
+		<PackageId>WertDrof.Encryption</PackageId>
+		<Version>1.0.0</Version>
+		<Authors>WertDrof</Authors>
+		<Description>Package for encryption. Don't use for high-level security projects.</Description>
+		<PackageTags>encryption security hashing</PackageTags>
+		<RepositoryUrl>https://github.com/AzadAshurov/WertDrof.Encryption</RepositoryUrl>
+	</PropertyGroup>
 
 </Project>
